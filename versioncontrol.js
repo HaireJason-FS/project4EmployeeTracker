@@ -25,25 +25,25 @@ the calculatePay() method in both the Manager and PartTime classes will be used 
 */
 class Employee {
   constructor(name, age) {
-    if (this.constructor === Employee) {
-      throw new Error("Abstract classes can't be instantiated.");
-    }
     this.name = name;
     this.age = age;
     this.annualSalary = 0;
+    this.hours = 0;
+    this.payRate = 0;
+    this.type = "";
   }
   // No methods to be used in this class
 }
 
 class Manager extends Employee {
-  constructor(name, age, payRate, hoursWorked) {
+  constructor(name, age, payRate,) {
     super(name, age);
+    this.hours = 40;
     this.payRate = payRate;
-    this.hoursWorked = hoursWorked;
-    this.employeeType = "Manager";
+    this.type = "Manager";
   }
   calculatePay() {
-    this.annualSalary = (this.payRate * this.hoursWorked * 52) - 1000;
+    this.annualSalary = ((this.payRate * 40) * 52) - 1000;
   }
 }
 
@@ -51,28 +51,30 @@ class PartTime extends Employee {
   constructor(name, age, payRate, hoursWorked) {
     super(name, age);
     this.payRate = payRate;
-    this.hoursWorked = hoursWorked;
-    this.employeeType = "PartTime";
+    this.hours = hoursWorked;
+    this.type = "Part Time";
   }
   calculatePay() {
-    this.annualSalary = this.payRate * this.hoursWorked * 52;
+    this.annualSalary = this.payRate * this.hours * 52;
   }
 }
 
 
 //Now that we have our classes, we need to create the main menu function (using prompts) that will allow the user to select options to add, remove, edit, view employees or exit the program. When the program is started, we need to have 3 hard coded employees displayed inside the console. The display for the menu up top should be: Main Menu: 1. Add Employee 2. Remove Employee 3. Edit Employee 4. View Employees 5. Exit
 //We will also need to have the hard coded employees created using the classes above.
-class EmpTracker{
+/*
+The employees that are shown in the console need to be as follows:
+My Cool Employees
+ID  Name	Age	Salary	Hours	 Pay Rate	 Manager/Part-Time
+1	Scott	  25	19800 	  40	    10	        Manager
+2	Dave	  30	9400	    40	    5	          Manager
+3	Lisa	  22	4992	    12	    8	        Part-Time
+*/
+
+class EmpTracker {
   constructor() {
     this.employees = [];
-    this.initHardCodedEmployees();
-    this.dispMainMenu();
-  }
-
-  initHardCodedEmployees() {
-    this.employees.push(new Manager("Alice", 45, 50, 40));
-    this.employees.push(new PartTime("Bob", 30, 20, 20));
-    this.employees.push(new Manager("Charlie", 50, 60, 45));
+    this.viewEmployees();
   }
 
   dispMainMenu() {
@@ -103,29 +105,65 @@ class EmpTracker{
     } while (choice !== "5");
   }
 
+
   addEmployee() {
-    // Implementation for adding an employee
-    
+    let empString = prompt("Enter Employee Info (Name, Age, Pay Rate, Hours per week)");
+    let [name, age, payRate, hoursWorked] = empString.split(",");
+    age = Number(age);
+    payRate = Number(payRate);
+    hoursWorked = Number(hoursWorked);
+    let newEmp;
+    if (hoursWorked >= 40) {
+      newEmp = new Manager(name, age, payRate);
+    } else {
+      newEmp = new PartTime(name, age, payRate, hoursWorked);
+    }
+    newEmp.calculatePay();
+    this.employees.push(newEmp);
+    this.dispMainMenu();
   }
 
   removeEmployee() {
-    // Implementation for removing an employee
+    let empToRemove = prompt("Enter Employee ID or Name to remove:");
+    let empID = Number(empToRemove);
+    if (!isNaN(empID)) {
+      this.employees.splice(empID - 1, 1);
+    } else {
+      this.employees = this.employees.filter(emp => emp.name.toLowerCase() !== empToRemove.toLowerCase());
+    }
+    this.viewEmployees();
   }
-
+  
   editEmployee() {
-    // Implementation for editing an employee
+    let empID = Number(prompt("Enter Employee ID to edit:"));
+    let newPayRate = Number(prompt("Enter new Pay Rate:"));
+    let emp = this.employees[empID - 1];
+    emp.payRate = newPayRate;
+    emp.calculatePay();
+    this.viewEmployees();
   }
 
   viewEmployees() {
+    //Display hard coded employees if the array is empty
+    if (this.employees.length === 0) {
+      this.employees.push(
+        new Manager("Scott", 25, 10),
+        new Manager("Dave", 30, 5),
+        new PartTime("Lisa", 22, 8, 12)
+      );
+      this.employees.forEach(emp => emp.calculatePay());
+    }
     console.clear();
-    console.log("Employee List:");
+    console.log("My Cool Employees");
+    console.log("ID\tName\tAge\tSalary\tHours\tPay Rate\tManager/Part-Time");
     this.employees.forEach((emp, index) => {
       console.log(
-        `${index + 1}. ${emp.name}, Age: ${emp.age}, Type: ${emp.employeeType}, Annual Salary: $${emp.annualSalary}`
-      );
+        `${index + 1}\t${emp.name}\t${emp.age}\t${emp.annualSalary}\t${emp.hours}\t${emp.payRate}\t\t${emp.type}`);
     });
+    this.dispMainMenu();
   }
 
+  //Exit program function to stop all prompts and display a button to restart the program
   exitProgram() {
     alert("Exiting program...");
     // Modify DOM to show "Restart Program" button
@@ -135,10 +173,9 @@ class EmpTracker{
     document.body.innerHTML = "";
     document.body.appendChild(restartButton);
   }
+    
 }
-
 //Arrow IIFE 
 (() => {
   const empTracker = new EmpTracker();
-  console.log("Employee Tracker Initialized");
 })();
