@@ -1,179 +1,144 @@
 /*
-Classes
+We will be making an employee tracker. There will be a main menu to display options to the user such as:
+1. Add employee
+  This will prompt the user to enter the employees information such as: name, age, pay rate, hours worked. Once the user enters the information, it will be stored in an array of employee objects and displayed with the other hard coded employees.
+2. Remove employee
+  This will prompt the user to enter the ID OR NAME of the employee to be removed from the array of employee objects.
+3. Edit Employee
+  This will allow the user to edit the pay rate of an employee by entering the ID OR NAME of the employee and the new pay rate.
+4. View Employees
+  This will display a list of all employees with their information such as: name, age, pay rate, hours worked, and total pay (pay rate * hours worked).
+5. Exit
+  This will exit the program and stop ALL prompts. If the user selects this option, we need to modify the DOM to show a button that says "Restart Program" which when clicked will reload the page.
 
-Besides the Main class, you will need to create the following classes:
+Classes: 
+1. Employee:
+  This is the super class (or base class) that will contain the necessary methods and properties that are intended to be inherited. THIS CLASS SHOULD NOT BE INSTANTIATED. NO METHODS ARE TO BE USED IN THIS CLASS.
+2. Manager:
+  This class will extend the Employee class and contain ONLY the properties needed for a full time employee(Manager). This class will have a calculatePay() method that will return the pay rate * hours worked. This class should only be used if the employee has 40 or more hours worked. This class should only have 2 properties: payRate and employeeType (set to "Manager").
+3. PartTime:
+  This class will extend the Employee class and contain ONLY the properties needed for a part time employee. This class will have a calculatePay() method that will return the pay rate * hours worked. This class should only be used if the employee has less than 40 hours worked. This class should only have 3 properties: payRate, hours, and employeeType (set to "PartTime").
 
-Employee - This is the super class or base class for the employee. It will contain all the necessary methods and properties that are intended to be inherited. Hint: The class should NOT be instantiated. You do not need any methods in this class. 
-PartTime - This class will extend Employee and contain only the properties needed for a part-time employee. It will also have a calculatePay() method. This class only has 3 properties, payRate, hours, and employee type.
-Manager - This class will extend Employee and contain only the properties needed for a full-time manager employee. It will also have a calculatePay() method. A manager is an employee that works 40+hours. This class only has 2 properties, payRate, and employee Type
+Both Manager and PartTime classes will inherit the same name, age, and annualSalary properties from the Employee class.
 
-The PartTime and Manager class will inherit the name, age, and annualSalary properties from the Employee Class.
-
-The calculatePay() method
-
-This method is on both of the concrete classes (PartTime and Manager) and should calculate the annual pay based on 52 weeks and assign that value to the annual salary property. Manager employees have a 40+ hour work week and part-time employees have some other value <40 depending on user input. Also, there is a $1000 deduction in the annual pay for manager employees because of medical insurance costs. Hint: The formulas should be different on each class's calculatePay() method.
-
-Ex 1: A Manager employee working 40 hours a week that earns a whopping $5 per hour should earn an annual salary of $9400
-
-Ex 2: A Part-time employee working 12 hours a week that earns a whopping $8 per hour should earn an annual salary of $4992
+the calculatePay() method in both the Manager and PartTime classes will be used to calculate the total pay for each employee based on their pay rate and hours worked. This should calculate the total annual salary based on 52 weeks and assign that value to the anual salary property. Managers will have 40+ hours worked and PartTime employees will have less than 40 hours worked. Managers will have an additional deduction of 1000 from their annual salary to account for benefits (both calculatePay() methods should be different in both classes).
 */
-//Everything will be displayed in the console and prompted via prompt() function
-
-  /*
-  The Main Menu
-
-The following menu options are required:
-
-Add Employee - Adds an employee to the table. This option will prompt the user with the name, age, payrate and number of hours per week. Depending on the number of hours worked, a part time or manager employee is then instantiated and added to the employee's array. Once added, display the updated information in the console. Hint: Use the Array split() method to convert the string prompt to an array.
-Remove Employee - Removes the desired employee from the employees array. This must be done by the employee number shown on the table in the console and also by typing the name of the employee. Once removed, display the updated employee information in the console. Hint: Use the filter() method to help you remove the employee by its name. Check out the isNan function. This may help you in figuring out if what you type is a number or a string.
-Edit Employee - This option will allow to edit the payrate only for the chosen employee. For this option, you can just select the employee you want to edit by its employee number on the table shown in the console. Make sure the employee number starts at 1 in the console. Once edited, then display the updated employee information in the console.
-Display Employees - Display the employee's information in the console. The Employee number(starting with 1), name, age, salary, hours, pay, and employee type is shown for each employee. Have a console.log() to show the column headers using tabs "\t"
-
-3 employees are hard coded initially. Make sure the output is displayed showing those 3 employees when program starts along with the 4 menu options.
-
-Each menu option functionality is coded in its own function in the Main Class.
-An array is used to hold all employee instances.
-Invoke a console.clear() to clear the console before information is displayed
-Console.Log() is used to display the employees in the console.
-A filter() method is used to delete an employee
-Make sure all code is in a class as stated in the setup instructions.
-Use the provided screen shot to get an idea of output expectations.
-
-The Hard Coded Employees are as follows (displayed):
-My Cool Employees
-ID  Name	Age	Salary	Hours	 Pay Rate	 Manager/Part-Time
-1	Scott	  25	19800 	  40	    10	        Manager
-2	Dave	  30	9400	    40	    5	          Manager
-3	Lisa	  22	4992	    12	    8	        Part-Time
-
-We will be using the string split() method to quickly create an array based off the values in a single string.
-*/
-
 class Employee {
-  constructor(n, a){
-    this.name = n;
-    this.age = a;
+  constructor(name, age) {
+    if (this.constructor === Employee) {
+      throw new Error("Abstract classes can't be instantiated.");
+    }
+    this.name = name;
+    this.age = age;
     this.annualSalary = 0;
-    this.weeklyHours = 0;
-    this.payRate = 0;
   }
+  // No methods to be used in this class
 }
 
 class Manager extends Employee {
-  constructor(p,n,a){
-    super(n, a);
-    this.weeklyHours = 40;
-    this.payRate = p;
-    this.type = "Manager";
-    this.calculatePay();
+  constructor(name, age, payRate, hoursWorked) {
+    super(name, age);
+    this.payRate = payRate;
+    this.hoursWorked = hoursWorked;
+    this.employeeType = "Manager";
   }
   calculatePay() {
-    this.annualSalary = (this.weeklyHours * this.payRate * 52) - 1000;
+    this.annualSalary = (this.payRate * this.hoursWorked * 52) - 1000;
   }
 }
 
 class PartTime extends Employee {
-  constructor(p,h,n,a){
-    super(n, a);
-    this.weeklyHours = h;
-    this.payRate = p;
-    this.type = "Part-Time";
-    this.calculatePay();
+  constructor(name, age, payRate, hoursWorked) {
+    super(name, age);
+    this.payRate = payRate;
+    this.hoursWorked = hoursWorked;
+    this.employeeType = "PartTime";
   }
   calculatePay() {
-    this.annualSalary = this.weeklyHours * this.payRate * 52;
+    this.annualSalary = this.payRate * this.hoursWorked * 52;
   }
 }
 
-//Main Class
+
+//Now that we have our classes, we need to create the main menu function (using prompts) that will allow the user to select options to add, remove, edit, view employees or exit the program. When the program is started, we need to have 3 hard coded employees displayed inside the console. The display for the menu up top should be: Main Menu: 1. Add Employee 2. Remove Employee 3. Edit Employee 4. View Employees 5. Exit
+//We will also need to have the hard coded employees created using the classes above.
 class EmpTracker{
-  constructor(){}
-
-  displayMenu(){
-    let choice = Number(prompt("Main Menu\n1. Add Employee\n2. Remove Employee\n3. Edit Employee\n4. Display Employees\n5. Exit\n\nEnter your choice (1-5):"));
-
-    switch(choice){
-      case 1:
-        this.addEmployee();
-        break;
-      case 2:
-        this.removeEmployee();
-        break;
-      case 3:
-        this.editEmployee();
-        break;
-      case 4:
-        this.displayEmployees();
-        break;
-      case 5:
-        console.log("Exiting program.");
-        break;
-      default:
-        alert("Invalid choice. Please enter a number between 1 and 5.");
-    }
-    this.displayMenu();
+  constructor() {
+    this.employees = [];
+    this.initHardCodedEmployees();
+    this.dispMainMenu();
   }
 
-  addEmployee(){
-    let empString = prompt("Enter Employee Information (Name, Age, Pay Rate, Weekly Hours) separated by commas:");
-    let empArray = empString.split(",").map(item => item.trim());
-    let name = empArray[0];
-    let age = Number(empArray[1]);
-    let payRate = Number(empArray[2]);
-    let weeklyHours = Number(empArray[3]);
-    let newEmployee;
-
-    if(weeklyHours >= 40){
-      newEmployee = new Manager(payRate, name, age);
-    } else {
-      newEmployee = new PartTime(payRate, weeklyHours, name, age);
-    }
-    this.employees.push(newEmployee);
+  initHardCodedEmployees() {
+    this.employees.push(new Manager("Alice", 45, 50, 40));
+    this.employees.push(new PartTime("Bob", 30, 20, 20));
+    this.employees.push(new Manager("Charlie", 50, 60, 45));
   }
-  removeEmployee(){
-    let empToRemove = prompt("Enter Employee Number or Name to Remove:");
-    if(!isNaN(empToRemove)){
-      let empIndex = Number(empToRemove) - 1;
-      if(empIndex >= 0 && empIndex < this.employees.length){
-        this.employees.splice(empIndex, 1);
-      } else {
-        alert("Employee number not found.");
+
+  dispMainMenu() {
+    let choice;
+    do {
+      choice = prompt(
+        "Main Menu:\n1. Add Employee\n2. Remove Employee\n3. Edit Employee\n4. View Employees\n5. Exit"
+      );
+      switch (choice) {
+        case "1":
+          this.addEmployee();
+          break;
+        case "2":
+          this.removeEmployee();
+          break;
+        case "3":
+          this.editEmployee();
+          break;
+        case "4":
+          this.viewEmployees();
+          break;
+        case "5":
+          this.exitProgram();
+          break;
+        default:
+          alert("Invalid choice. Please select a valid option.");
       }
-    } else {
-      this.employees = this.employees.filter(emp => emp.name.toLowerCase() !== empToRemove.toLowerCase());
-    }
-  }
-  editEmployee(){
-    let empNumber = Number(prompt("Enter Employee Number to Edit Pay Rate:")) - 1;
-    if(empNumber >= 0 && empNumber < this.employees.length){
-      let newPayRate = Number(prompt("Enter New Pay Rate:"));
-      this.employees[empNumber].payRate = newPayRate;
-      this.employees[empNumber].calculatePay();
-    } else {
-      alert("Employee number not found.");
-    }
+    } while (choice !== "5");
   }
 
-  displayEmployees(){
-    if(this.employees.length === 0){
-      console.log("No employees to display.");
-      return;
-    }
-    console.log("ID\tName\tAge\tSalary\tHours\t Pay Rate\t Manager/Part-Time");
+  addEmployee() {
+    // Implementation for adding an employee
+    
+  }
+
+  removeEmployee() {
+    // Implementation for removing an employee
+  }
+
+  editEmployee() {
+    // Implementation for editing an employee
+  }
+
+  viewEmployees() {
+    console.clear();
+    console.log("Employee List:");
     this.employees.forEach((emp, index) => {
-      console.log(`${index + 1}\t${emp.name}\t${emp.age}\t${emp.annualSalary}\t${emp.weeklyHours}\t${emp.payRate}\t${emp.type}`);
+      console.log(
+        `${index + 1}. ${emp.name}, Age: ${emp.age}, Type: ${emp.employeeType}, Annual Salary: $${emp.annualSalary}`
+      );
     });
   }
+
+  exitProgram() {
+    alert("Exiting program...");
+    // Modify DOM to show "Restart Program" button
+    const restartButton = document.createElement("button");
+    restartButton.textContent = "Restart Program";
+    restartButton.onclick = () => location.reload();
+    document.body.innerHTML = "";
+    document.body.appendChild(restartButton);
+  }
 }
-//Hard coded employees (need to be displayed in the console when program starts)
-(e=>{
-  e.employees = [
-    new Manager(10, "Scott", 25),
-    new Manager(5, "Dave", 30),
-    new PartTime(8, 12, "Lisa", 22)
-  ];
-  console.clear();
-  e.displayEmployees();
-  e.displayMenu();
+
+//Arrow IIFE 
+(() => {
   const empTracker = new EmpTracker();
-})(new EmpTracker());
+  console.log("Employee Tracker Initialized");
+})();
